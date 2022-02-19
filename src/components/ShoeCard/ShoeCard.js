@@ -28,22 +28,28 @@ const ShoeCard = ({
   const variant = typeof salePrice === 'number'
     ? 'on-sale'
     : isNewShoe(releaseDate)
-      ? 'new-release'
-      : 'default'
+    ? 'new-release'
+    : 'default'
 
   return (
     <Link href={`/shoe/${slug}`}>
       <Wrapper>
         <ImageWrapper>
           <Image alt="" src={imageSrc} />
+          {variant === 'on-sale' && <OnSaleCaption>On Sale</OnSaleCaption>}
+          {variant === 'new-release' && <NewReleaseCaption>Just released!</NewReleaseCaption>}
         </ImageWrapper>
         <Spacer size={12} />
         <Row>
           <Name>{name}</Name>
-          <Price>{formatPrice(price)}</Price>
+          <Price style={{
+            '--color': variant === 'on-sale' && COLORS.gray[700],
+            '--text-decoration': variant === 'on-sale' && 'line-through',
+          }}>{formatPrice(price)}</Price>
         </Row>
         <Row>
           <ColorInfo>{pluralize('Color', numOfColors)}</ColorInfo>
+          {variant === 'on-sale' && <SalePrice>{formatPrice(salePrice)}</SalePrice>}
         </Row>
       </Wrapper>
     </Link>
@@ -53,6 +59,25 @@ const ShoeCard = ({
 const Link = styled.a`
   text-decoration: none;
   color: inherit;
+`;
+
+const Caption = styled.div`
+  position: absolute;
+  top: 10px;
+  right: -5px;
+  border-radius: 4px;
+  color: ${COLORS.white};
+  padding: 10px;
+  font-weight: ${WEIGHTS.bold};
+  font-size: ${14/18}rem;
+`;
+
+const OnSaleCaption = styled(Caption)`
+  background-color: ${COLORS.primary};
+`;
+
+const NewReleaseCaption = styled(Caption)`
+  background-color: ${COLORS.secondary};
 `;
 
 const Wrapper = styled.article``;
@@ -67,6 +92,8 @@ const Image = styled.img`
 
 const Row = styled.div`
   font-size: 1rem;
+  display: flex;
+  justify-content: space-between;
 `;
 
 const Name = styled.h3`
@@ -74,7 +101,10 @@ const Name = styled.h3`
   color: ${COLORS.gray[900]};
 `;
 
-const Price = styled.span``;
+const Price = styled.span`
+  color: var(--color);
+  text-decoration: var(--text-decoration);
+`;
 
 const ColorInfo = styled.p`
   color: ${COLORS.gray[700]};
